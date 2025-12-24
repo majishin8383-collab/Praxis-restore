@@ -69,3 +69,47 @@ export function renderHome() {
     el("div", { class: "homeGrid" }, actions.map(tile)),
   ]);
 }
+export function renderSimpleFlow(title, subtitle, status, contentNode, primaryLabel, primaryHash) {
+  const wrap = document.createElement("section");
+  wrap.className = "card";
+
+  const head = document.createElement("div");
+  head.className = "cardHead";
+  head.innerHTML = `<h1 class="h1">${title}</h1><p class="sub">${subtitle}</p>`;
+
+  const body = document.createElement("div");
+  body.className = "cardBody";
+  if (contentNode) body.appendChild(contentNode);
+
+  const foot = document.createElement("div");
+  foot.className = "cardFoot";
+
+  const pill = document.createElement("span");
+  pill.className = "pill";
+  pill.textContent = status || "Ready";
+
+  const actions = document.createElement("div");
+  actions.className = "actions";
+
+  const home = document.createElement("button");
+  home.className = "linkBtn";
+  home.textContent = "Reset";
+  home.onclick = () => (location.hash = "#/home");
+
+  const primary = document.createElement("button");
+  primary.className = "btn";
+  primary.textContent = primaryLabel || "Continue";
+  primary.onclick = () => (location.hash = primaryHash || "#/home");
+
+  actions.appendChild(home);
+  actions.appendChild(primary);
+
+  foot.appendChild(pill);
+  foot.appendChild(actions);
+
+  wrap.appendChild(head);
+  wrap.appendChild(body);
+  wrap.appendChild(foot);
+
+  return wrap;
+}
