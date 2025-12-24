@@ -1,19 +1,19 @@
-import { setMain, renderHome } from "./ui.js";
+import { setMain, renderHome } from "./ui.js?v=20251224a";
 
-import { renderCalm } from "./zones/yellow/calm.js";
-import { renderStopUrge } from "./zones/yellow/stopUrge.js";
+import { renderFocusSprint } from "./zones/green/focusSprint.js?v=20251224a";
+import { renderMoveForward } from "./zones/green/moveForward.js?v=20251224a";
 
-import { renderFocusSprint } from "./zones/green/focusSprint.js";
-import { renderMoveForward } from "./zones/green/moveForward.js";
+import { renderCalm } from "./zones/yellow/calm.js?v=20251224a";
+import { renderStopUrge } from "./zones/yellow/stopUrge.js?v=20251224a";
 
-import { renderEmergency } from "./zones/red/emergency.js";
+import { renderEmergency } from "./zones/red/emergency.js?v=20251224a";
 
 const routes = new Map([
   ["#/home", () => renderHome()],
-  ["#/yellow/calm", () => renderCalm()],
-  ["#/yellow/urge", () => renderStopUrge()],
   ["#/green/focus", () => renderFocusSprint()],
   ["#/green/move", () => renderMoveForward()],
+  ["#/yellow/calm", () => renderCalm()],
+  ["#/yellow/urge", () => renderStopUrge()],
   ["#/red/emergency", () => renderEmergency()],
 ]);
 
