@@ -1,10 +1,8 @@
-import { COPY } from "./data/copy.js";
-
 export function setMain(node) {
   const main = document.getElementById("main");
   if (!main) return;
   main.innerHTML = "";
-  main.appendChild(node);
+  if (node) main.appendChild(node);
 }
 
 function el(tag, attrs = {}, children = []) {
@@ -25,40 +23,49 @@ function el(tag, attrs = {}, children = []) {
 }
 
 function go(hash) {
-  location.hash = hash; // simple navigation, no imports
+  location.hash = hash;
 }
 
-function tile(a) {
+function tile({ title, sub, hint, to, zone }) {
   const dotClass =
-    a.zone === "green" ? "dotGreen" :
-    a.zone === "yellow" ? "dotYellow" :
+    zone === "green" ? "dotGreen" :
+    zone === "yellow" ? "dotYellow" :
     "dotRed";
 
   return el("button", {
     class: "actionTile",
     type: "button",
-    onClick: () => go(a.to),
+    onClick: () => go(to),
   }, [
     el("div", { class: "tileTop" }, [
       el("div", {}, [
-        el("div", { class: "tileTitle" }, [a.title]),
-        el("div", { class: "tileSub" }, [a.sub]),
+        el("div", { class: "tileTitle" }, [title]),
+        el("div", { class: "tileSub" }, [sub]),
       ]),
       el("div", { class: `zoneDot ${dotClass}` }, []),
     ]),
-    el("p", { class: "tileHint" }, [a.hint]),
+    el("p", { class: "tileHint" }, [hint]),
   ]);
 }
 
 export function renderHome() {
+  // Reset = Home. 6 main actions total: Reset screen + 5 tiles.
+  const actions = [
+    { title: "Calm Me Down", sub: "Reduce intensity", hint: "Regain choice.", to: "#/yellow/calm", zone: "yellow" },
+    { title: "Stop the Urge", sub: "Delay → distance → redirect", hint: "Interrupt the impulse.", to: "#/yellow/urge", zone: "yellow" },
+    { title: "Move Forward", sub: "One small step", hint: "Progress, not perfection.", to: "#/green/move", zone: "green" },
+    { title: "Get Something Done", sub: "Body activation", hint: "Break freeze fast.", to: "#/green/focus", zone: "green" },
+    { title: "Emergency", sub: "Fast stabilization", hint: "When it’s too much.", to: "#/red/emergency", zone: "red" },
+  ];
+
   return el("div", { class: "flowShell" }, [
     el("div", { class: "homeTop" }, [
       el("div", {}, [
-        el("h1", { class: "h1" }, [COPY.home.title]),
-        el("p", { class: "p" }, [COPY.home.subtitle]),
+        el("h1", { class: "h1" }, ["Reset"]),
+        el("p", { class: "p" }, ["Start here when you’re spun up."]),
       ]),
       el("div", { class: "badge" }, ["Tap-first. Minimal thinking."]),
     ]),
-    el("div", { class: "homeGrid" }, COPY.home.actions.map(tile)),
+    el("div", { class: "homeGrid" }, actions.map(tile)),
   ]);
 }
