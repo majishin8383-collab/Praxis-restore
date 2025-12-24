@@ -5,7 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Praxis</title>
 
-  <!-- CSS -->
   <link rel="stylesheet" href="./styles/base.css" />
   <link rel="stylesheet" href="./styles/components.css" />
   <link rel="stylesheet" href="./styles/home.css" />
@@ -27,9 +26,7 @@
       </nav>
     </header>
 
-    <main id="main" class="main" role="main" aria-live="polite">
-      <!-- JS renders here -->
-    </main>
+    <main id="main" class="main" role="main" aria-live="polite"></main>
 
     <footer class="footer">
       <div class="footerNote">
@@ -39,10 +36,7 @@
 
   </div>
 
-  <!-- JS (cache-busted for mobile dev) -->
-  <script type="module">
-    const v = Date.now();
-    import(`./js/app.js?v=${v}`);
-  </script>
+  <!-- STATIC MODULE LOAD (reliable on GitHub Pages) -->
+  <script type="module" src="./js/app.js"></script>
 </body>
 </html>
