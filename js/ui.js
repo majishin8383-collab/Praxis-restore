@@ -69,6 +69,7 @@ export function renderHome() {
     el("div", { class: "homeGrid" }, actions.map(tile)),
   ]);
 }
+
 export function renderSimpleFlow(title, subtitle, status, contentNode, primaryLabel, primaryHash) {
   const wrap = document.createElement("section");
   wrap.className = "card";
