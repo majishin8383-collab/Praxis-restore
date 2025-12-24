@@ -1,106 +1,105 @@
+const mainEl = () => document.getElementById("main");
+
 export function setMain(node) {
-  const main = document.getElementById("main");
+  const main = mainEl();
   if (!main) return;
   main.innerHTML = "";
   if (node) main.appendChild(node);
 }
 
-function el(tag, attrs = {}, children = []) {
-  const node = document.createElement(tag);
-  for (const [k, v] of Object.entries(attrs)) {
-    if (k === "class") node.className = v;
-    else if (k.startsWith("on") && typeof v === "function") {
-      node.addEventListener(k.slice(2).toLowerCase(), v);
-    } else {
-      node.setAttribute(k, v);
-    }
-  }
-  for (const child of children) {
-    if (child == null) continue;
-    node.appendChild(typeof child === "string" ? document.createTextNode(child) : child);
-  }
-  return node;
+function el(tag, className, text) {
+  const n = document.createElement(tag);
+  if (className) n.className = className;
+  if (text !== undefined) n.textContent = text;
+  return n;
 }
 
-function go(hash) {
+function card(title, subtitle) {
+  const wrap = el("section", "card");
+  const head = el("div", "cardHead");
+  head.appendChild(el("h1", "h1", title));
+  head.appendChild(el("p", "sub", subtitle));
+  wrap.appendChild(head);
+
+  const body = el("div", "cardBody");
+  wrap.appendChild(body);
+
+  return { wrap, body };
+}
+
+function navTo(hash) {
   location.hash = hash;
 }
 
-function tile({ title, sub, hint, to, zone }) {
-  const dotClass =
-    zone === "green" ? "dotGreen" :
-    zone === "yellow" ? "dotYellow" :
-    "dotRed";
-
-  return el("button", {
-    class: "actionTile",
-    type: "button",
-    onClick: () => go(to),
-  }, [
-    el("div", { class: "tileTop" }, [
-      el("div", {}, [
-        el("div", { class: "tileTitle" }, [title]),
-        el("div", { class: "tileSub" }, [sub]),
-      ]),
-      el("div", { class: `zoneDot ${dotClass}` }, []),
-    ]),
-    el("p", { class: "tileHint" }, [hint]),
-  ]);
-}
-
+// Reset = Home
 export function renderHome() {
-  // Reset = Home. 6 main actions total: Reset screen + 5 tiles.
-  const actions = [
-    { title: "Calm Me Down", sub: "Reduce intensity", hint: "Regain choice.", to: "#/yellow/calm", zone: "yellow" },
-    { title: "Stop the Urge", sub: "Delay → distance → redirect", hint: "Interrupt the impulse.", to: "#/yellow/urge", zone: "yellow" },
-    { title: "Move Forward", sub: "One small step", hint: "Progress, not perfection.", to: "#/green/move", zone: "green" },
-    { title: "Get Something Done", sub: "Body activation", hint: "Break freeze fast.", to: "#/green/focus", zone: "green" },
-    { title: "Emergency", sub: "Fast stabilization", hint: "When it’s too much.", to: "#/red/emergency", zone: "red" },
+  const { wrap, body } = card("Reset", "Start here when you’re spun up.");
+
+  // Simple reset block
+  const reset = el("div", "block");
+  reset.appendChild(el("h3", "", "30-second reset"));
+  reset.appendChild(el("p", "", "Exhale longer than you inhale. Shoulders down. Feet on the floor."));
+  reset.appendChild(el("div", "hr"));
+
+  const ul = el("ul", "list");
+  const li1 = el("li", "item"); li1.innerHTML = "<strong>Step 1</strong><span>Name 5 things you see.</span>";
+  const li2 = el("li", "item"); li2.innerHTML = "<strong>Step 2</strong><span>Feet into the ground for 10 seconds.</span>";
+  const li3 = el("li", "item"); li3.innerHTML = "<strong>Step 3</strong><span>Exhale 6 / Inhale 4 × 5.</span>";
+  ul.appendChild(li1); ul.appendChild(li2); ul.appendChild(li3);
+  reset.appendChild(ul);
+  body.appendChild(reset);
+
+  const homeStack = el("div", "homeStack");
+
+  // Primary action on Reset screen = Calm Me Down
+  const primaryBtn = el("button", "homePrimary");
+  primaryBtn.type = "button";
+  primaryBtn.innerHTML = `Calm Me Down <span class="hint">2 minutes to lower intensity.</span>`;
+  primaryBtn.addEventListener("click", () => navTo("#/yellow/calm"));
+  homeStack.appendChild(primaryBtn);
+
+  const grid = el("div", "homeGrid");
+
+  const buttons = [
+    { label: "Stop the Urge", hint: "Delay → distance → redirect.", hash: "#/yellow/urge" },
+    { label: "Move Forward", hint: "One small step.", hash: "#/green/move" },
+    { label: "Get Something Done", hint: "Activate body movement.", hash: "#/green/focus" },
+    { label: "Emergency", hint: "Fast stabilization.", hash: "#/red/emergency" },
   ];
 
-  return el("div", { class: "flowShell" }, [
-    el("div", { class: "homeTop" }, [
-      el("div", {}, [
-        el("h1", { class: "h1" }, ["Reset"]),
-        el("p", { class: "p" }, ["Start here when you’re spun up."]),
-      ]),
-      el("div", { class: "badge" }, ["Tap-first. Minimal thinking."]),
-    ]),
-    el("div", { class: "homeGrid" }, actions.map(tile)),
-  ]);
+  for (const b of buttons) {
+    const btn = el("button", "homeBtn");
+    btn.type = "button";
+    btn.innerHTML = `${b.label} <span class="hint">${b.hint}</span>`;
+    btn.addEventListener("click", () => navTo(b.hash));
+    grid.appendChild(btn);
+  }
+
+  homeStack.appendChild(grid);
+  wrap.appendChild(homeStack);
+
+  return wrap;
 }
 
 export function renderSimpleFlow(title, subtitle, status, contentNode, primaryLabel, primaryHash) {
-  const wrap = document.createElement("section");
-  wrap.className = "card";
+  const { wrap, body } = card(title, subtitle);
 
-  const head = document.createElement("div");
-  head.className = "cardHead";
-  head.innerHTML = `<h1 class="h1">${title}</h1><p class="sub">${subtitle}</p>`;
-
-  const body = document.createElement("div");
-  body.className = "cardBody";
   if (contentNode) body.appendChild(contentNode);
 
-  const foot = document.createElement("div");
-  foot.className = "cardFoot";
+  const foot = el("div", "cardFoot");
+  const pill = el("span", "pill", status || "Ready");
 
-  const pill = document.createElement("span");
-  pill.className = "pill";
-  pill.textContent = status || "Ready";
+  const actions = el("div", "actions");
 
-  const actions = document.createElement("div");
-  actions.className = "actions";
-
-  const home = document.createElement("button");
-  home.className = "linkBtn";
+  const home = el("button", "linkBtn");
+  home.type = "button";
   home.textContent = "Reset";
-  home.onclick = () => (location.hash = "#/home");
+  home.addEventListener("click", () => navTo("#/home"));
 
-  const primary = document.createElement("button");
-  primary.className = "btn";
+  const primary = el("button", "btn");
+  primary.type = "button";
   primary.textContent = primaryLabel || "Continue";
-  primary.onclick = () => (location.hash = primaryHash || "#/home");
+  primary.addEventListener("click", () => navTo(primaryHash || "#/home"));
 
   actions.appendChild(home);
   actions.appendChild(primary);
@@ -108,8 +107,6 @@ export function renderSimpleFlow(title, subtitle, status, contentNode, primaryLa
   foot.appendChild(pill);
   foot.appendChild(actions);
 
-  wrap.appendChild(head);
-  wrap.appendChild(body);
   wrap.appendChild(foot);
 
   return wrap;
